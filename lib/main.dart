@@ -68,6 +68,11 @@ class _MyHomePageState extends State<MyHomePage> {
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            ElevatedButton(
+              onPressed: () => _addTextARKitNode(),
+              child: const Text('add text'),
+            ),
+            const SizedBox(height: 10),
             FloatingActionButton(
               child: const Icon(Icons.add),
               onPressed: () => _addARKitNode(),
@@ -89,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (arKitNodeList.isEmpty) {
       final node = ARKitNode(
           geometry: ARKitSphere(radius: 0.05),
+          // Mark: - Vector3.z 如果為 0，會因為距離太近而看不到物件
           position: Vector3(0, positionYstake, -0.5));
       arKitNodeList.add(node);
       arkitController.add(node);
@@ -108,5 +114,15 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     arkitController.remove(arKitNodeList.last.name);
     arKitNodeList.removeLast();
+  }
+
+  void _addTextARKitNode() {
+    final text = ARKitText(text: 'ARKitText', extrusionDepth: 0);
+    final node = ARKitNode(
+      geometry: text,
+      position: Vector3(0, 0, -0.4),
+      scale: Vector3(0.01, 0.01, 0.01),
+    );
+    arkitController.add(node);
   }
 }
