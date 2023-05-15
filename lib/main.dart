@@ -52,6 +52,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late ARKitController arkitController;
+  double positionYstake = 0;
+  List<ARKitNode> arKitNodeList = [];
 
   @override
   void dispose() {
@@ -61,13 +63,50 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(title: const Text('ARKit in Flutter')),
-      body: ARKitSceneView(onARKitViewCreated: onARKitViewCreated));
+        appBar: AppBar(title: const Text('ARKit in Flutter')),
+        body: ARKitSceneView(onARKitViewCreated: onARKitViewCreated),
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              child: const Icon(Icons.add),
+              onPressed: () => _addARKitNode(),
+            ),
+            const SizedBox(height: 10),
+            FloatingActionButton(
+              child: const Icon(Icons.remove),
+              onPressed: () => _removeARKitNode(),
+            ),
+          ],
+        ),
+      );
 
   void onARKitViewCreated(ARKitController arkitController) {
     this.arkitController = arkitController;
-    final node = ARKitNode(
-        geometry: ARKitSphere(radius: 0.1), position: Vector3(0, 0, -0.5));
-    this.arkitController.add(node);
+  }
+
+  void _addARKitNode() {
+    if (arKitNodeList.isEmpty) {
+      final node = ARKitNode(
+          geometry: ARKitSphere(radius: 0.05),
+          position: Vector3(0, positionYstake, -0.5));
+      arKitNodeList.add(node);
+      arkitController.add(node);
+    } else {
+      final lastARKitNode = arKitNodeList.last;
+      final node = ARKitNode(
+          geometry: ARKitSphere(radius: 0.05),
+          position: Vector3(0, lastARKitNode.position.y + 0.1, -0.5));
+      arKitNodeList.add(node);
+      arkitController.add(node);
+    }
+  }
+
+  void _removeARKitNode() {
+    if (arKitNodeList.isEmpty) {
+      return;
+    }
+    arkitController.remove(arKitNodeList.last.name);
+    arKitNodeList.removeLast();
   }
 }
