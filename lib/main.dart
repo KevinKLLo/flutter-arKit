@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             ElevatedButton(
-              onPressed: () => _addTextARKitNode(),
+              onPressed: () => _addTextARKitNode('addText'),
               child: const Text('add text'),
             ),
             const SizedBox(height: 10),
@@ -88,6 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void onARKitViewCreated(ARKitController arkitController) {
     this.arkitController = arkitController;
+    arkitController.onARTap = (hits) => _addTextARKitNode('onARTap');
+    arkitController.onNodeTap = (nodes) => _addTextARKitNode('onNodeTap');
   }
 
   void _addARKitNode() {
@@ -116,13 +118,18 @@ class _MyHomePageState extends State<MyHomePage> {
     arKitNodeList.removeLast();
   }
 
-  void _addTextARKitNode() {
-    final text = ARKitText(text: 'ARKitText', extrusionDepth: 0);
+  void _addTextARKitNode(String content) {
+    final text = ARKitText(text: content, extrusionDepth: 0);
     final node = ARKitNode(
       geometry: text,
       position: Vector3(0, 0, -0.4),
       scale: Vector3(0.01, 0.01, 0.01),
     );
     arkitController.add(node);
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) =>
+          AlertDialog(content: Text('onNodeTap on $content')),
+    );
   }
 }
